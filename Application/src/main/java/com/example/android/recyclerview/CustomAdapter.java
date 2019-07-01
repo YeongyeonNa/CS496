@@ -16,89 +16,120 @@
 
 package com.example.android.recyclerview;
 
-import android.content.Context;
+import com.example.android.common.logger.Log;
+import com.google.android.gms.maps.model.Circle;
+
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
-
     private static final String TAG = "CustomAdapter";
-    //스트링 리스트??
-    private String[] mDataSet;
-    private Context mContext;
 
+    private String[][] mDataSet;
+    private Bitmap[] mImageSet;
 
-    //ViewHolder 정의
+    // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
+    /**
+     * Provide a reference to the type of views that you are using (custom ViewHolder)
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
+        private final CircleImageView profile_image;
 
         public ViewHolder(View v) {
             super(v);
-            // 아래 무슨 말인지 모르겠음
-//            // Define click listener for the ViewHolder's View.
-//            v.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
-//                }
-//            });
+            // Define click listener for the ViewHolder's View.
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
+                }
+            });
             textView = (TextView) v.findViewById(R.id.textView);
+            profile_image = (CircleImageView) v.findViewById(R.id.profile_image);
         }
 
         public TextView getTextView() {
             return textView;
         }
-    }
 
-    // CumstomAdapter의 인풋 정의: string[]으로 받는다
-    public CustomAdapter(Context context, String[] dataSet) {
-        //위에서 정의한 어트리뷰트 mDataSet은 인풋으로 받은 string[]이다
+        public CircleImageView getImageView() {
+            return profile_image;
+        }
+    }
+    // END_INCLUDE(recyclerViewSampleViewHolder)
+
+    /**
+     * Initialize the dataset of the Adapter.
+     *
+     * @param dataSet String[] containing the data to populate views to be used by RecyclerView.
+     */
+    public CustomAdapter(String[][] dataSet, Bitmap[] imageSet) {
         mDataSet = dataSet;
-        mContext = context;
+        mImageSet = imageSet;
     }
 
-    //뷰홀더가 만들어졌을 대
+    // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
+    // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view.
-        View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.text_row_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.text_row_item, viewGroup, false);
 
         return new ViewHolder(v);
     }
+    // END_INCLUDE(recyclerViewOnCreateViewHolder)
 
+    // BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
+    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
 
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
-        viewHolder.getTextView().setText(mDataSet[position]);
-        //viewHolder.textView.setOnClickListener((view));
+
+        String sentence = "Contact #" + (position + 1) + "\n이름: " + mDataSet[position][0] + "\n번호: " + mDataSet[position][1] + "\n\n";
+        viewHolder.getImageView().setImageBitmap(mImageSet[position]);
+        viewHolder.getTextView().setText(sentence);
+
+
         viewHolder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Log.d(TAG, "onClick: clicked on: " + mImageNames.get(position));
+                String personName = mDataSet[position][0];
+                String personNumvber = mDataSet[position][1];
+                Bitmap personImage = mImageSet[position];
 
-//                Toast.makeText(mContext, mImageNames.get(position), Toast.LENGTH_SHORT).show();
-                Toast.makeText(mContext, "토스트 메세지", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(mContext, GalleryActivity.class);
-//                intent.putExtra("image_url", mImages.get(position));
+                Intent intent = new Intent(viewHolder.itemView.getContext(), GalleryActivity.class);
+                intent.putExtra("name_key",personName);
+                intent.putExtra("number_key", personNumvber);
+                intent.putExtra("image_key", personImage);
+
+
+
+
+//                intent.putExtra("name_key", mDataSet[position]);
 //                intent.putExtra("image_name", mImageNames.get(position));
-//                mContext.startActivity(intent);
+                viewHolder.itemView.getContext().startActivity(intent);
             }
         });
 
     }
+    // END_INCLUDE(recyclerViewOnBindViewHolder)
 
+    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mDataSet.length;

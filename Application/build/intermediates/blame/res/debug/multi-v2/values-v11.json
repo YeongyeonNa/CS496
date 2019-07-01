@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\CS496-Android-master\\Application\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v11\\values-v11.xml",
+            "outputFile": "D:\\forNew\\CS496-Android-master\\Application\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v11\\values-v11.xml",
             "map": [
                 {
-                    "source": "D:\\CS496-Android-master\\Application\\src\\main\\res\\values-v11\\template-styles.xml",
+                    "source": "D:\\forNew\\CS496-Android-master\\Application\\src\\main\\res\\values-v11\\template-styles.xml",
                     "from": {
                         "startLines": "19",
                         "startColumns": "4",

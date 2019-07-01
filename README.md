@@ -2,10 +2,16 @@
 KAIST CS496 학부 세미나: 안드로이드 프로그래밍
 
 ## References
+
+### Tab 1
 https://github.com/googlesamples/android-RecyclerView
 
-https://medium.com/@janishar.ali/android-beginner-image-gallery-example-da73a596f4d5#.p42z8w83o
+https://github.com/hdodenhof/CircleImageView
 
 https://bitsoul.tistory.com/155
 
-https://github.com/hdodenhof/CircleImageView
+### Tab 2
+https://mainia.tistory.com/497
+
+### Tab 3
+https://webnautes.tistory.com/1080

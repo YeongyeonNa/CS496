@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\CS496-Android-master\\Application\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-en-rAU\\values-en-rAU.xml",
+            "outputFile": "D:\\forNew\\CS496-Android-master\\Application\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-en-rAU\\values-en-rAU.xml",
             "map": [
                 {
                     "source": "C:\\Users\\q\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-27.0.2.aar\\727a953ba0b6d9a21eb16df3507c37f6\\res\\values-en-rAU\\values-en-rAU.xml",

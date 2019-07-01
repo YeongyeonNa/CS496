@@ -16,9 +16,14 @@
 
 package com.example.android.recyclerview;
 
+import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +31,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Demonstrates the use of {@link RecyclerView} with a {@link LinearLayoutManager} and a
@@ -37,7 +46,6 @@ public class RecyclerViewFragment extends Fragment {
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private static final int SPAN_COUNT = 2;
 
-    //여기 필요 없을 듯?
     private enum LayoutManagerType {
         GRID_LAYOUT_MANAGER,
         LINEAR_LAYOUT_MANAGER
@@ -48,7 +56,8 @@ public class RecyclerViewFragment extends Fragment {
     protected RecyclerView mRecyclerView;
     protected CustomAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
-    protected String[] mDataset;
+    protected String[][] mDataset;
+    protected Bitmap[] mImageSet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +91,7 @@ public class RecyclerViewFragment extends Fragment {
         }
         setRecyclerViewLayoutManager(mCurrentLayoutManagerType);
 
-        mAdapter = new CustomAdapter(getActivity(), mDataset);
+        mAdapter = new CustomAdapter(mDataset, mImageSet);
         // Set CustomAdapter as the adapter for RecyclerView.
         mRecyclerView.setAdapter(mAdapter);
         // END_INCLUDE(initializeRecyclerView)
@@ -135,7 +144,7 @@ public class RecyclerViewFragment extends Fragment {
      */
     private void initDataset() {
         Cursor c = getActivity().getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, "DISPLAY_NAME ASC"
         );
 
         if (c != null && c.getCount() != 0) {
@@ -145,20 +154,60 @@ public class RecyclerViewFragment extends Fragment {
                 size++;
             } while(c.moveToNext());
 
-            mDataset = new String[size];
+            mDataset = new String[size][2];
+            mImageSet = new Bitmap[size];
 
             c.moveToFirst();
             int i = 0;
             do {
                 String name = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String phoneNumber = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                mDataset[i] = "Contact #" + (i + 1) + "\n이름: " + name + "\n번호: " + phoneNumber + "\n\n";
+                phoneNumber.replaceAll("-", "");
+
+                if (phoneNumber.length() == 8) {
+                    phoneNumber = phoneNumber.replaceFirst("^([0-9]{4})([0-9]{4})$", "$1-$2");
+                } else if (phoneNumber.length() == 12) {
+                    phoneNumber = phoneNumber.replaceFirst("(^[0-9]{4})([0-9]{4})([0-9]{4})$", "$1-$2-$3");
+                }
+                phoneNumber = phoneNumber.replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
+
+                //mDataset[i] = "Contact #" + (i + 1) + "\n이름: " + name + "\n번호: " + phoneNumber + "\n\n";
+                mDataset[i][0]= name;
+                mDataset[i][1]= phoneNumber;
+
+
+
+                String image_uri = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI));
+
+                if (image_uri != null) {
+                    try {
+                        mImageSet[i] = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(image_uri));
+                    }
+                    catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    try {
+                        String loc = "android.resource://" + getActivity().getPackageName() + "/drawable/contact_default";
+                        mImageSet[i] = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(loc));
+                    }
+                    catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 i++;
             } while(c.moveToNext());
         }
         else {
-            mDataset = new String[1];
-            mDataset[0] = "연락처가 없습니다.";
+            mDataset = new String[1][1];
+            mDataset[0][0] = "연락처가 없습니다.";
         }
     }
 }
