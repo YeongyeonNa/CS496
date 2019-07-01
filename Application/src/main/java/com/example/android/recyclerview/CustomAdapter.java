@@ -28,6 +28,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -107,21 +109,28 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         viewHolder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Log.d(TAG, "onClick: clicked on: " + mImageNames.get(position));
+                Log.d(TAG, "onClick: clicked on: " + mDataSet[position][0]);
                 String personName = mDataSet[position][0];
                 String personNumvber = mDataSet[position][1];
                 Bitmap personImage = mImageSet[position];
+                //android.util.Log.d(TAG, "onClick: "+personName);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                personImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+
+
+
+
+
 
                 Intent intent = new Intent(viewHolder.itemView.getContext(), GalleryActivity.class);
                 intent.putExtra("name_key",personName);
                 intent.putExtra("number_key", personNumvber);
-                intent.putExtra("image_key", personImage);
+                intent.putExtra("image_key", byteArray);
+                Log.d(TAG, "onClick: 1234");
 
 
-
-
-//                intent.putExtra("name_key", mDataSet[position]);
-//                intent.putExtra("image_name", mImageNames.get(position));
                 viewHolder.itemView.getContext().startActivity(intent);
             }
         });

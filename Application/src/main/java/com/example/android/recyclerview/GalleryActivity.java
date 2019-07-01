@@ -2,12 +2,14 @@ package com.example.android.recyclerview;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //import com.bumptech.glide.Glide;
 
@@ -15,7 +17,7 @@ import android.widget.TextView;
  * Created by User on 1/2/2018.
  */
 
-public class GalleryActivity extends Activity {
+public class GalleryActivity extends Activity{
 
     private static final String TAG = "GalleryActivity";
 
@@ -33,16 +35,19 @@ public class GalleryActivity extends Activity {
 
         String phoneName = getIntent().getStringExtra("name_key");
         String phoneNumber = getIntent().getStringExtra("number_key");
-        Bitmap phoneImage = (Bitmap) getIntent().getParcelableExtra("image_key");
 
-//        if(getIntent().hasExtra("image_url") && getIntent().hasExtra("image_name")){
-//            Log.d(TAG, "getIncomingIntent: found intent extras.");
-//            //인스턴스
-//            String imageUrl = getIntent().getStringExtra("image_url");
-//            String imageName = getIntent().getStringExtra("image_name");
-//
+        byte[] arr = getIntent().getByteArrayExtra("image_key");
+        Bitmap phoneImage = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+//        ImageView BigImage = (ImageView)findViewById(R.id.BigImage);
+//        BigImage.setImageBitmap(image);
+
+
+
+        //Bitmap phoneImage = (Bitmap) getIntent().getParcelableExtra("image_key");
+
         setImage(phoneName, phoneNumber, phoneImage);
-//        }
+
+
     }
 
 
